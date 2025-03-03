@@ -1,0 +1,26 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "ElydasChibiV1.moc3",
+		"Textures": [
+			"ElydasChibiV1.1024/texture_00.png"
+		],
+		"Physics": "ElydasChibiV1.physics3.json",
+		"DisplayInfo": "ElydasChibiV1.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		}
+	]
+}
