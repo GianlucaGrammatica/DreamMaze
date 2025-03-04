@@ -3,38 +3,68 @@ using System.Collections.Generic;
 
 public class RoomSpawner : MonoBehaviour
 {
-    public List<GameObject> roomPrefabs;  // Lista di prefabs delle stanze
-    public int numberOfRooms = 5;         // Numero di stanze da spawnare
-    public float roomSpacing = 10;        // Spazio tra le stanze sull'asse X
+    public Graph graph;                            // Riferimento al grafo
+    public GameObject[] roomPrefabs;                // 🟢 Array di prefabs per 4 tipi di stanze
+    public Transform roomParent;                    // Genitore delle stanze
+    public float roomOffset = 10f;                  // Distanza tra le stanze
 
-    // Inizia lo spawn delle stanze
+    private Room[] rooms;                           // Array delle stanze create
+
     void Start()
     {
-        SpawnRooms();
+        GenerateRooms();
+        LinkRooms();
     }
 
-    // Funzione per spawnare le stanze
-    void SpawnRooms()
+    // 🟢 Genera stanze con prefab casuali
+    void GenerateRooms()
     {
-        if (roomPrefabs.Count == 0)
+        rooms = new Room[graph.VerticesNumber];
+        Vector3 currentPosition = Vector3.zero;  // 🟢 Punto di partenza
+
+        for (int i = 0; i < graph.VerticesNumber; i++)
         {
-            Debug.LogError("La lista roomPrefabs è vuota!");
-            return;
+            // 🟢 Scegli un prefab casuale
+            GameObject selectedPrefab = roomPrefabs[Random.Range(0, roomPrefabs.Length)];
+
+            // 🟢 Posiziona progressivamente le stanze
+            GameObject roomObj = Instantiate(selectedPrefab, currentPosition, Quaternion.identity, roomParent);
+
+            Room room = roomObj.GetComponent<Room>();
+            room.roomID = i;
+            rooms[i] = room;
+
+            // 🟢 Aggiorna la posizione per la prossima stanza
+            currentPosition += new Vector3(roomOffset, 0, 0);  // Sposta di 10 unità sull'asse X
         }
+    }
 
-        Vector3 startPosition = transform.position;
-
-        for (int i = 0; i < numberOfRooms; i++)
+    // 🟢 Collega le stanze basandosi sulla matrice di adiacenza
+    void LinkRooms()
+    {
+        for (int i = 0; i < graph.VerticesNumber; i++)
         {
-            // Sceglie casualmente un prefab dalla lista
-            GameObject randomRoomPrefab = roomPrefabs[Random.Range(0, roomPrefabs.Count)];
+            Room currentRoom = rooms[i];
+            List<int> connections = graph.GetConnections(i);
 
-            // Calcola la posizione per ogni stanza rispetto al punto di partenza
-            Vector3 newPosition = startPosition + new Vector3(i * roomSpacing, 0, 0);
+            for (int j = 0; j < connections.Count; j++)
+            {
+                int connectedRoomID = connections[j];
+                Room connectedRoom = rooms[connectedRoomID];
 
-            // Istanzia la stanza scelta casualmente
-            GameObject newRoom = Instantiate(randomRoomPrefab, newPosition, Quaternion.identity);
-            newRoom.name = "Room_" + i;  // Rinomina la stanza per riconoscerla
+                // 🟢 Collega le porte solo se non sono già collegate
+                if (currentRoom.doors[j] != null && connectedRoom.doors[(j + 2) % 4] != null)
+                {
+                    if (!currentRoom.doors[j].isLinked && !connectedRoom.doors[(j + 2) % 4].isLinked)
+                    {
+                        currentRoom.doors[j].teleportDestination = connectedRoom.doors[(j + 2) % 4].transform;
+                        connectedRoom.doors[(j + 2) % 4].teleportDestination = currentRoom.doors[j].transform;
+
+                        currentRoom.doors[j].isLinked = true;
+                        connectedRoom.doors[(j + 2) % 4].isLinked = true;
+                    }
+                }
+            }
         }
     }
 }
