@@ -1,47 +1,31 @@
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class GraphRoomSpawner : MonoBehaviour
+public class RoomSpawner : MonoBehaviour
 {
-    public GameObject roomPrefab;
-    public int roomSpacing = 12; // Distanza tra le stanze
+    public GameObject roomPrefab;  // Prefab della stanza
+    public int numberOfRooms = 5;  // Numero di stanze da spawnare
+    public float roomSpacing = 10; // Spazio tra le stanze sull'asse X
 
-    private Dictionary<int, Vector3> roomPositions = new Dictionary<int, Vector3>();
-
-    private Graph graph = new Graph(10);
-
-    public void GenerateRooms(Graph graph)
+    // Inizia lo spawn delle stanze
+    void Start()
     {
-        List<(int, int)> edges = graph.GetEdges();
-        roomPositions.Clear();
+        SpawnRooms();
+    }
 
-        // Posizioniamo la prima stanza al centro
-        roomPositions[0] = Vector3.zero;
-        InstantiateRoom(0, Vector3.zero);
+    // Funzione per spawnare le stanze
+    void SpawnRooms()
+    {
+        // Usa la posizione dell'oggetto come punto di partenza
+        Vector3 startPosition = transform.position;
 
-        foreach (var edge in edges)
+        for (int i = 0; i < numberOfRooms; i++)
         {
-            int roomA = edge.Item1;
-            int roomB = edge.Item2;
+            // Calcola la posizione per ogni stanza rispetto al punto di partenza
+            Vector3 newPosition = startPosition + new Vector3(i * roomSpacing, 0, 0);
 
-            if (!roomPositions.ContainsKey(roomB))
-            {
-                Vector3 newPosition = roomPositions[roomA] + new Vector3(roomSpacing, 0, 0);
-                roomPositions[roomB] = newPosition;
-                InstantiateRoom(roomB, newPosition);
-            }
+            // Istanzia la stanza
+            GameObject newRoom = Instantiate(roomPrefab, newPosition, Quaternion.identity);
+            newRoom.name = "Room_" + i;  // Rinomina la stanza per riconoscerla
         }
-    }
-
-    private void InstantiateRoom(int id, Vector3 position)
-    {
-        GameObject newRoom = Instantiate(roomPrefab, position, Quaternion.identity);
-        newRoom.name = "Room_" + id;
-    }
-
-    public void Start()
-    {
-        GenerateRooms(graph);
     }
 }
