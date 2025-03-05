@@ -11,4 +11,9 @@ public class Room : MonoBehaviour
     {
         connectedRooms = connections;
     }
+
+    void Awake()
+    {
+        doors = GetComponentsInChildren<Door>();  // Trova tutte le porte sotto la stanza
+    }
 }

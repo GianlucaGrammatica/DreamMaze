@@ -47,17 +47,11 @@ TagManager:
   - name: WallsCollisions
     uniqueID: 3338070743
     locked: 0
-  - name: Collisions
-    uniqueID: 2181342745
-    locked: 0
-  - name: WalkInFront
-    uniqueID: 2508481413
+  - name: Doors
+    uniqueID: 3416186391
     locked: 0
   - name: Player
     uniqueID: 3632109507
-    locked: 0
-  - name: WalkBehind
-    uniqueID: 1174868169
     locked: 0
   m_RenderingLayers:
   - Default

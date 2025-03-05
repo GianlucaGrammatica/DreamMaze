@@ -12,6 +12,7 @@ public class RoomSpawner : MonoBehaviour
 
     void Start()
     {
+
         GenerateRooms();
         LinkRooms();
     }
@@ -29,6 +30,8 @@ public class RoomSpawner : MonoBehaviour
 
             // 🟢 Posiziona progressivamente le stanze
             GameObject roomObj = Instantiate(selectedPrefab, currentPosition, Quaternion.identity, roomParent);
+
+
 
             Room room = roomObj.GetComponent<Room>();
             room.roomID = i;
@@ -53,17 +56,18 @@ public class RoomSpawner : MonoBehaviour
                 Room connectedRoom = rooms[connectedRoomID];
 
                 // 🟢 Collega le porte solo se non sono già collegate
-                if (currentRoom.doors[j] != null && connectedRoom.doors[(j + 2) % 4] != null)
+                if (currentRoom.doors.Length > j && connectedRoom.doors.Length > (j + 2) % 4)
                 {
-                    if (!currentRoom.doors[j].isLinked && !connectedRoom.doors[(j + 2) % 4].isLinked)
-                    {
-                        currentRoom.doors[j].teleportDestination = connectedRoom.doors[(j + 2) % 4].transform;
-                        connectedRoom.doors[(j + 2) % 4].teleportDestination = currentRoom.doors[j].transform;
+                    Door doorA = currentRoom.doors[j];
+                    Door doorB = connectedRoom.doors[(j + 2) % 4];
 
-                        currentRoom.doors[j].isLinked = true;
-                        connectedRoom.doors[(j + 2) % 4].isLinked = true;
-                    }
+                    doorA.teleportDestination = doorB.transform;
+                    doorA.isLinked = true;
+
+                    doorB.teleportDestination = doorA.transform;
+                    doorB.isLinked = true;
                 }
+
             }
         }
     }
