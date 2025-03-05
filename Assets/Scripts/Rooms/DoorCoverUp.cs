@@ -2,15 +2,14 @@ using UnityEngine;
 
 public class DoorCoverUp : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public bool isHidden = false; // Controlla se il muro è nascosto
 
-    // Update is called once per frame
-    void Update()
+    // Imposta la visibilità del muro e disattiva/attiva l'oggetto stesso
+    public void SetVisibility(bool isVisible)
     {
-        
+        isHidden = !isVisible;
+
+        // Disattiva o attiva l'oggetto stesso (e tutti i suoi figli, incluse le Tilemap)
+        gameObject.SetActive(isVisible);
     }
 }

@@ -56,9 +56,9 @@ public class RoomSpawner : MonoBehaviour
             Room currentRoom = rooms[i];
             List<int> connections = graph.GetConnections(i);  // Prende le connessioni corrette
 
-            Debug.Log($"Room {i} has {connections.Count} connections.");
+            //Debug.Log($"Room {i} has {connections.Count} connections.");
 
-            // 🟢 L'array deve avere la stessa lunghezza delle porte della stanza
+            // L'array deve avere la stessa lunghezza delle porte della stanza
             currentRoom.connectedRooms = new Room[currentRoom.doors.Length];
 
             for (int j = 0; j < connections.Count; j++)
@@ -66,14 +66,17 @@ public class RoomSpawner : MonoBehaviour
                 int connectedRoomID = connections[j];
                 Room connectedRoom = rooms[connectedRoomID];
 
-                // 🟢 Se esiste una porta in questa posizione, assegniamo la connessione
+                // Se esiste una porta in questa posizione, assegniamo la connessione
                 if (j < currentRoom.doors.Length)
                 {
                     currentRoom.connectedRooms[j] = connectedRoom;
                 }
 
-                Debug.Log($"Room {i} connected to Room {connectedRoomID} at index {j}");
+                //Debug.Log($"Room {i} connected to Room {connectedRoomID} at index {j}");
             }
+
+            // Aggiorna lo stato delle porte e dei DoorCoverUp
+            currentRoom.InitializeConnections(currentRoom.connectedRooms);
         }
     }
 

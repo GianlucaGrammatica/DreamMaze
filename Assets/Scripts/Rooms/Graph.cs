@@ -50,17 +50,17 @@ public class Graph : MonoBehaviour
         FirstNode = Grafo[0];
         LastNode = Grafo[VerticesNumber - 1];
 
-        Debug.Log($"Grafo inizializzato con {vertices} nodi - " + BaseMatrix);
+        //Debug.Log($"Grafo inizializzato con {vertices} nodi - " + BaseMatrix);
     }
 
     // 🆕 Ottiene i collegamenti di un nodo specifico
     public List<int> GetConnections(int nodeID)
     {
-        Debug.Log($"Richiamato GetConnections");
-        Debug.Log("NodeID: "+ nodeID);
+        //Debug.Log($"Richiamato GetConnections");
+       // Debug.Log("NodeID: "+ nodeID);
         List<int> connections = new List<int>();
 
-        Debug.Log("NAAAAA: " + BaseMatrix[0, 0]);
+        //Debug.Log("NAAAAA: " + BaseMatrix[0, 0]);
         for (int j = 0; j < VerticesNumber; j++)
         {
             
