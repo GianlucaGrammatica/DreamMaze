@@ -5,6 +5,7 @@ public class Room : MonoBehaviour
     public int roomID;            // ID della stanza, corrisponde al nodo nel grafo
     public Door[] doors;          // Array di porte della stanza
     public DoorCoverUp[] doorCoverUps; // Array di coperture delle porte
+    public GameObject[] Spawners; // Array di coperture delle porte
     public Room[] connectedRooms; // Stanze collegate
 
     // Inizializza le porte con le stanze collegate
