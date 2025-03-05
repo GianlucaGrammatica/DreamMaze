@@ -12,7 +12,11 @@ public class RoomSpawner : MonoBehaviour
 
     void Start()
     {
-
+        //graph = GetComponent<Graph>();        
+        graph.InitializeGraph(5);  // Crea il grafo con i nodi
+        graph.GenerateMatrix();                // Genera la matrice di collegamenti
+        graph.PopulateList();                  // Popola la lista dei nodi collegati             // Popola la lista dei nodi collegati
+        
         GenerateRooms();
         LinkRooms();
     }
@@ -32,10 +36,11 @@ public class RoomSpawner : MonoBehaviour
             GameObject roomObj = Instantiate(selectedPrefab, currentPosition, Quaternion.identity, roomParent);
 
 
-
+        
             Room room = roomObj.GetComponent<Room>();
             room.roomID = i;
             rooms[i] = room;
+            
 
             // 🟢 Aggiorna la posizione per la prossima stanza
             currentPosition += new Vector3(roomOffset, 0, 0);  // Sposta di 10 unità sull'asse X
@@ -48,7 +53,7 @@ public class RoomSpawner : MonoBehaviour
         for (int i = 0; i < graph.VerticesNumber; i++)
         {
             Room currentRoom = rooms[i];
-            List<int> connections = graph.GetConnections(i);
+            List<int> connections = graph.GetConnections(0);
             Debug.Log("Connctions: "+ connections);
 
             for (int j = 0; j < connections.Count; j++)

@@ -27,9 +27,7 @@ public class Graph : MonoBehaviour
     // 🆕 Inizializzazione nel metodo Start per usare Graph come componente in Unity
     void Start()
     {
-        InitializeGraph(VerticesNumber);  // Crea il grafo con i nodi
-        GenerateMatrix();                // Genera la matrice di collegamenti
-        PopulateList();                  // Popola la lista dei nodi collegati
+        
     }
 
     // 🆕 Inizializza il grafo con un numero di nodi specificato
@@ -52,16 +50,21 @@ public class Graph : MonoBehaviour
 
         FirstNode = Grafo[0];
         LastNode = Grafo[VerticesNumber - 1];
+
+        Debug.Log($"Grafo inizializzato con {vertices} nodi - " + BaseMatrix);
     }
 
     // 🆕 Ottiene i collegamenti di un nodo specifico
     public List<int> GetConnections(int nodeID)
     {
+        Debug.Log($"Richiamato GetConnections");
         Debug.Log("NodeID: "+ nodeID);
         List<int> connections = new List<int>();
 
+        Debug.Log("NAAAAA: " + BaseMatrix[0, 0]);
         for (int j = 0; j < VerticesNumber; j++)
         {
+            
             if (BaseMatrix[nodeID, j] == 1)
             {
                 connections.Add(j);
@@ -169,7 +172,7 @@ public class Graph : MonoBehaviour
     }
 
     // 🆕 Popola la lista dei nodi collegati
-    private void PopulateList()
+    public void PopulateList()
     {
         ConnectedNodes.Clear();
 
