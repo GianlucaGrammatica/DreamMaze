@@ -2,38 +2,27 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    public Transform teleportDestination;  // 🟢 Porta a cui collegarsi
-    public bool isLinked = false;          // 🟢 Controlla se è collegata a un'altra porta
-    public float teleportCooldown = 1f;    // 🟢 Evita TP multipli istantanei
+    public Transform teleportDestination;  // Porta a cui collegarsi
+    public bool isLinked = false;          // Controlla se è collegata a un'altra porta
+    public float teleportOffset = 2f;      // Offset per il teletrasporto
 
-    private bool canTeleport = true;       // 🟢 Controlla se il TP è disponibile 
-
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.CompareTag("Player") && isLinked && canTeleport)
+        // Verifica se l'oggetto che entra nel trigger è il player e se la porta è collegata
+        if (collision.gameObject.CompareTag("Player") && isLinked)
         {
-            StartCoroutine(TeleportPlayer(other));
+            TeleportPlayer(collision.gameObject);  // Teletrasporta il player
         }
     }
 
-    private System.Collections.IEnumerator TeleportPlayer(Collider player)
+    private void TeleportPlayer(GameObject player)
     {
-        canTeleport = false;  // 🟢 Disabilita il TP temporaneamente
-        CharacterController controller = player.GetComponent<CharacterController>();
+        // Calcola la posizione di teletrasporto con l'offset
+        Vector2 offsetDirection = (teleportDestination.position - transform.position).normalized;
+        Vector2 teleportPosition = (Vector2)teleportDestination.position + offsetDirection * teleportOffset;
 
-        if (controller != null)
-        {
-            // 🟢 Disabilita e riabilita il CharacterController per evitare bug di collisione
-            controller.enabled = false;
-            player.transform.position = teleportDestination.position;
-            controller.enabled = true;
-        }
-        else
-        {
-            player.transform.position = teleportDestination.position;
-        }
-
-        yield return new WaitForSeconds(teleportCooldown);
-        canTeleport = true;  // 🟢 Riabilita il TP dopo il cooldown
+        // Teletrasporta il player alla posizione calcolata
+        player.transform.position = teleportPosition;
+        Debug.Log("Player teleported to: " + teleportPosition);
     }
 }
