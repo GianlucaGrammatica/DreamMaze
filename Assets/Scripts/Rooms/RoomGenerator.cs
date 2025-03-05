@@ -41,6 +41,7 @@ public class RoomSpawner : MonoBehaviour
             room.roomID = i;
             rooms[i] = room;
             
+            
 
             // 🟢 Aggiorna la posizione per la prossima stanza
             currentPosition += new Vector3(roomOffset, 0, 0);  // Sposta di 10 unità sull'asse X

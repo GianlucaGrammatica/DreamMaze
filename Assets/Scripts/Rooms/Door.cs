@@ -6,7 +6,7 @@ public class Door : MonoBehaviour
     public bool isLinked = false;          // 🟢 Controlla se è collegata a un'altra porta
     public float teleportCooldown = 1f;    // 🟢 Evita TP multipli istantanei
 
-    private bool canTeleport = true;       // 🟢 Controlla se il TP è disponibile
+    private bool canTeleport = true;       // 🟢 Controlla se il TP è disponibile 
 
     private void OnTriggerEnter(Collider other)
     {

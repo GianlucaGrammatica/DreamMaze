@@ -24,7 +24,6 @@ public class Graph : MonoBehaviour
 
     private System.Random random;
 
-    // 🆕 Inizializzazione nel metodo Start per usare Graph come componente in Unity
     void Start()
     {
         
