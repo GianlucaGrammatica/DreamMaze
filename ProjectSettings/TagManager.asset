@@ -47,6 +47,9 @@ TagManager:
   - name: WallsCollisions
     uniqueID: 3338070743
     locked: 0
+  - name: DoorsFloor
+    uniqueID: 3595022263
+    locked: 0
   - name: Doors
     uniqueID: 3416186391
     locked: 0
