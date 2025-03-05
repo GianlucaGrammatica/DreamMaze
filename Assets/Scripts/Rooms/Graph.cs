@@ -179,17 +179,24 @@ public class Graph : MonoBehaviour
 
             for (int j = 0; j < VerticesNumber; j++)
             {
-                if (BaseMatrix[i, j] != 0)
+                if (BaseMatrix[i, j] != 0 && Grafo[j] != null)
                 {
                     nodo.nodes[count] = Grafo[j];
                     count++;
                 }
             }
 
-            if (count > 0)
+            // Rimuove eventuali null rimanenti negli slot dell'array
+            for (int k = count; k < nodo.nodes.Length; k++)
+            {
+                nodo.nodes[k] = null;
+            }
+
+            if (count > 0 && !ConnectedNodes.Contains(nodo))
             {
                 ConnectedNodes.Add(nodo);
             }
         }
     }
+
 }
