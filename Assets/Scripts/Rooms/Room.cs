@@ -13,4 +13,5 @@ public class Room : MonoBehaviour
     {
         connectedRooms = connections;
     }
+    
 }

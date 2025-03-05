@@ -16,7 +16,7 @@ public class RoomSpawner : MonoBehaviour
         graph.InitializeGraph(graph.VerticesNumber);  // Crea il grafo con i nodi
         graph.GenerateMatrix();                // Genera la matrice di collegamenti
         graph.PopulateList();                  // Popola la lista dei nodi collegati             // Popola la lista dei nodi collegati
-        
+
         GenerateRooms();
         LinkRooms();
     }
@@ -36,12 +36,12 @@ public class RoomSpawner : MonoBehaviour
             GameObject roomObj = Instantiate(selectedPrefab, currentPosition, Quaternion.identity, roomParent);
 
 
-        
+
             Room room = roomObj.GetComponent<Room>();
             room.roomID = i;
             rooms[i] = room;
-            
-            
+
+
 
             // 🟢 Aggiorna la posizione per la prossima stanza
             currentPosition += new Vector3(roomOffset, 0, 0);  // Sposta di 10 unità sull'asse X
@@ -54,28 +54,28 @@ public class RoomSpawner : MonoBehaviour
         for (int i = 0; i < graph.VerticesNumber; i++)
         {
             Room currentRoom = rooms[i];
-            List<int> connections = graph.GetConnections(0);
-            Debug.Log("Connctions: "+ connections);
+            List<int> connections = graph.GetConnections(i);  // Prende le connessioni corrette
+
+            Debug.Log($"Room {i} has {connections.Count} connections.");
+
+            // 🟢 L'array deve avere la stessa lunghezza delle porte della stanza
+            currentRoom.connectedRooms = new Room[currentRoom.doors.Length];
 
             for (int j = 0; j < connections.Count; j++)
             {
                 int connectedRoomID = connections[j];
                 Room connectedRoom = rooms[connectedRoomID];
 
-                // 🟢 Collega le porte solo se non sono già collegate
-                if (currentRoom.doors.Length > j && connectedRoom.doors.Length > (j + 2) % 4)
+                // 🟢 Se esiste una porta in questa posizione, assegniamo la connessione
+                if (j < currentRoom.doors.Length)
                 {
-                    Door doorA = currentRoom.doors[j];
-                    Door doorB = connectedRoom.doors[(j + 2) % 4];
-
-                    doorA.teleportDestination = doorB.transform;
-                    doorA.isLinked = true;
-
-                    doorB.teleportDestination = doorA.transform;
-                    doorB.isLinked = true;
+                    currentRoom.connectedRooms[j] = connectedRoom;
                 }
 
+                Debug.Log($"Room {i} connected to Room {connectedRoomID} at index {j}");
             }
         }
     }
+
+
 }
