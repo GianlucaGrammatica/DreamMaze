@@ -49,6 +49,7 @@ public class RoomSpawner : MonoBehaviour
         {
             Room currentRoom = rooms[i];
             List<int> connections = graph.GetConnections(i);
+            Debug.Log("Connctions: "+ connections);
 
             for (int j = 0; j < connections.Count; j++)
             {

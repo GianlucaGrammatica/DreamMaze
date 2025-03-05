@@ -57,6 +57,7 @@ public class Graph : MonoBehaviour
     // 🆕 Ottiene i collegamenti di un nodo specifico
     public List<int> GetConnections(int nodeID)
     {
+        Debug.Log("NodeID: "+ nodeID);
         List<int> connections = new List<int>();
 
         for (int j = 0; j < VerticesNumber; j++)
