@@ -6,9 +6,10 @@ public class SortingOrderDynamic : MonoBehaviour
     private CubismRenderController cubismRenderController; // CubismRenderController per gestire il sortingOrder
     private Vector3 lastPosition;
 
+    public float feetOffset = 0.5f; // Offset per l'altezza dei piedi
+
     void Awake()
     {
-        // Cerca il CubismRenderController nell'oggetto figlio del modello
         cubismRenderController = GetComponentInChildren<CubismRenderController>();
         lastPosition = transform.position;
         UpdateSortingOrder();
@@ -27,8 +28,9 @@ public class SortingOrderDynamic : MonoBehaviour
     {
         if (cubismRenderController != null)
         {
-            // Cambia il sortingOrder in base alla posizione Y del player
-            cubismRenderController.SortingOrder = -(Mathf.RoundToInt(transform.position.y));
+            // Prende la posizione Y con l'offset dei piedi
+            float feetY = transform.position.y - feetOffset;
+            cubismRenderController.SortingOrder = -(Mathf.RoundToInt(feetY));
         }
     }
 }

@@ -13,7 +13,7 @@ public class RoomSpawner : MonoBehaviour
     void Start()
     {
         //graph = GetComponent<Graph>();        
-        graph.InitializeGraph(5);  // Crea il grafo con i nodi
+        graph.InitializeGraph(graph.VerticesNumber);  // Crea il grafo con i nodi
         graph.GenerateMatrix();                // Genera la matrice di collegamenti
         graph.PopulateList();                  // Popola la lista dei nodi collegati             // Popola la lista dei nodi collegati
         
