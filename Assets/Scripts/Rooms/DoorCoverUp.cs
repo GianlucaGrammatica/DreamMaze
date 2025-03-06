@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class DoorCoverUp : MonoBehaviour
 {
-    public bool isHidden = false; // Controlla se il muro è nascosto
+    // Controlla se il muro è nascosto
+    public bool isHidden = false; 
 
     // Imposta la visibilità del muro e disattiva/attiva l'oggetto stesso
     public void SetVisibility(bool isVisible)

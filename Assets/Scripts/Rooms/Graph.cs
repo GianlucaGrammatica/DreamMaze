@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public class Node
 {
-    public int ID;
-    public Node[] nodes = new Node[4] { null, null, null, null };
+    public int ID; // Identificativo del nodo
+    public Node[] nodes = new Node[4] { null, null, null, null }; // Nodi collegati (massimo 4)
 
     public Node(int id)
     {
@@ -14,11 +14,19 @@ public class Node
 
 public class Graph : MonoBehaviour
 {
-    public int VerticesNumber = 5;                    // 🆕 Numero di nodi, configurabile da Unity
-    private int[,] BaseMatrix;                        // Matrice di adiacenza
-    private List<Node> Grafo = new List<Node>();      // Lista di nodi
-    public List<Node> ConnectedNodes = new List<Node>();  // 🆕 Lista pubblica dei nodi collegati
+    // Numero di nodi nel grafo
+    public int VerticesNumber = 5;
 
+    // Matrice di adiacenza
+    private int[,] BaseMatrix;
+
+    // Lista di tutti i nodi nel grafo
+    private List<Node> Grafo = new List<Node>();
+
+    // Lista dei nodi con almeno una connessione
+    public List<Node> ConnectedNodes = new List<Node>();
+
+    // Primo nodo e ultimo nodo del grafo
     public Node FirstNode;
     public Node LastNode;
 
@@ -26,12 +34,12 @@ public class Graph : MonoBehaviour
 
     void Start()
     {
-        
     }
 
-    // 🆕 Inizializza il grafo con un numero di nodi specificato
+    // Inizializza il grafo con il numero specificato di nodi
     public void InitializeGraph(int vertices)
     {
+        Debug.Log($"Inizializzazione grafo con {vertices} nodi");
         VerticesNumber = vertices;
         BaseMatrix = new int[VerticesNumber, VerticesNumber];
         random = new System.Random();
@@ -49,40 +57,37 @@ public class Graph : MonoBehaviour
 
         FirstNode = Grafo[0];
         LastNode = Grafo[VerticesNumber - 1];
-
-        //Debug.Log($"Grafo inizializzato con {vertices} nodi - " + BaseMatrix);
     }
 
-    // 🆕 Ottiene i collegamenti di un nodo specifico
+    // Ottiene i collegamenti di un nodo specifico
     public List<int> GetConnections(int nodeID)
     {
-        //Debug.Log($"Richiamato GetConnections");
-       // Debug.Log("NodeID: "+ nodeID);
+        Debug.Log($"Ottengo connessioni per nodo {nodeID}");
         List<int> connections = new List<int>();
 
-        //Debug.Log("NAAAAA: " + BaseMatrix[0, 0]);
         for (int j = 0; j < VerticesNumber; j++)
         {
-            
             if (BaseMatrix[nodeID, j] == 1)
             {
                 connections.Add(j);
             }
         }
+        Debug.Log($"Nodo {nodeID} ha {connections.Count} connessioni");
         return connections;
     }
 
     // Genera la matrice di adiacenza con collegamenti casuali
     public void GenerateMatrix()
     {
+        Debug.Log("Generazione matrice di adiacenza");
         int[] connections = new int[VerticesNumber];
 
         for (int i = 0; i < VerticesNumber; i++)
         {
             for (int j = 0; j < VerticesNumber; j++)
             {
-                if (i == 0 && j == VerticesNumber - 1) continue;  // Evita collegamenti diretti tra inizio e fine
-                if (i == j) continue;  // Evita autocollegamenti
+                if (i == 0 && j == VerticesNumber - 1) continue;
+                if (i == j) continue;
 
                 if (connections[i] < 4 && connections[j] < 4 && random.NextDouble() < 0.15)
                 {
@@ -96,6 +101,7 @@ public class Graph : MonoBehaviour
 
         if (CountPaths(0, VerticesNumber - 1) < 2)
         {
+            Debug.Log("Percorsi insufficienti, aggiunta di collegamenti casuali");
             AddRandomEdge(random.Next(1, 3));
         }
     }
@@ -103,9 +109,11 @@ public class Graph : MonoBehaviour
     // Conta i percorsi possibili tra due nodi
     public int CountPaths(int start, int end)
     {
+        Debug.Log($"Conteggio percorsi tra {start} e {end}");
         bool[] visited = new bool[VerticesNumber];
         int pathCount = 0;
         DFS(start, end, visited, ref pathCount);
+        Debug.Log($"Percorsi trovati: {pathCount}");
         return pathCount;
     }
 
@@ -134,6 +142,7 @@ public class Graph : MonoBehaviour
     // Aggiunge collegamenti casuali
     public void AddRandomEdge(int count)
     {
+        Debug.Log($"Aggiunta di {count} collegamenti casuali");
         int edgesAdded = 0;
 
         while (edgesAdded < count)
@@ -161,6 +170,7 @@ public class Graph : MonoBehaviour
         {
             BaseMatrix[Vertex1, Vertex2] = 1;
             BaseMatrix[Vertex2, Vertex1] = 1;
+            Debug.Log($"Collegamento aggiunto tra {Vertex1} e {Vertex2}");
         }
     }
 
@@ -170,9 +180,10 @@ public class Graph : MonoBehaviour
         return (Vertex >= 0 && Vertex < VerticesNumber);
     }
 
-    // 🆕 Popola la lista dei nodi collegati
+    // Popola la lista dei nodi collegati
     public void PopulateList()
     {
+        Debug.Log("Popolamento lista nodi collegati");
         ConnectedNodes.Clear();
 
         for (int i = 0; i < VerticesNumber; i++)
@@ -189,7 +200,6 @@ public class Graph : MonoBehaviour
                 }
             }
 
-            // Rimuove eventuali null rimanenti negli slot dell'array
             for (int k = count; k < nodo.nodes.Length; k++)
             {
                 nodo.nodes[k] = null;
@@ -200,6 +210,6 @@ public class Graph : MonoBehaviour
                 ConnectedNodes.Add(nodo);
             }
         }
+        Debug.Log($"Lista nodi collegati popolata con {ConnectedNodes.Count} nodi");
     }
-
 }

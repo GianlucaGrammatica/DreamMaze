@@ -3,35 +3,45 @@ using System.Collections.Generic;
 
 public class RoomSpawner : MonoBehaviour
 {
-    public Graph graph;                            // Riferimento al grafo
-    public GameObject[] roomPrefabs;                // Array di prefabs per 4 tipi di stanze
-    public Transform roomParent;                    // Genitore delle stanze
-    public float roomOffset = 10f;                  // Distanza tra le stanze
+    // Riferimento al grafo che definisce la struttura delle stanze
+    public Graph graph;
 
-    private Room[] rooms;                           // Array delle stanze create
+    // Array di prefabs per i diversi tipi di stanze
+    public GameObject[] roomPrefabs;
+
+    // Genitore delle stanze nella gerarchia di Unity
+    public Transform roomParent;
+
+    // Distanza tra le stanze lungo l'asse X
+    public float roomOffset = 10f;
+
+    // Array delle stanze create
+    private Room[] rooms;
 
     void Start()
     {
-        graph.InitializeGraph(graph.VerticesNumber);  // Crea il grafo con i nodi
-        graph.GenerateMatrix();                // Genera la matrice di collegamenti
-        graph.PopulateList();                  // Popola la lista dei nodi collegati
+        // Inizializza il grafo, genera la matrice di adiacenza e popola la lista delle connessioni
+        graph.InitializeGraph(graph.VerticesNumber);
+        graph.GenerateMatrix();
+        graph.PopulateList();
 
+        // Genera le stanze e le collega
         GenerateRooms();
         LinkRooms();
     }
 
-    // Genera stanze con prefab casuali
+    // Genera le stanze utilizzando i prefabs casuali e le posiziona in sequenza
     void GenerateRooms()
     {
         rooms = new Room[graph.VerticesNumber];
-        Vector3 currentPosition = Vector3.zero;  // Punto di partenza
+        Vector3 currentPosition = Vector3.zero;
 
         for (int i = 0; i < graph.VerticesNumber; i++)
         {
-            // Scegli un prefab casuale
+            // Sceglie un prefab casuale dall'array
             GameObject selectedPrefab = roomPrefabs[Random.Range(0, roomPrefabs.Length)];
 
-            // Posiziona progressivamente le stanze
+            // Istanzia la stanza nella posizione corrente
             GameObject roomObj = Instantiate(selectedPrefab, currentPosition, Quaternion.identity, roomParent);
 
             Room room = roomObj.GetComponent<Room>();
@@ -39,19 +49,23 @@ public class RoomSpawner : MonoBehaviour
             rooms[i] = room;
 
             // Aggiorna la posizione per la prossima stanza
-            currentPosition += new Vector3(roomOffset, 0, 0);  // Sposta di 10 unità sull'asse X
+            currentPosition += new Vector3(roomOffset, 0, 0);
         }
+
+        Debug.Log("Stanze generate con successo.");
     }
 
-    // Collega le stanze basandosi sulla matrice di adiacenza
+    // Collega le stanze in base alla matrice di adiacenza del grafo
     void LinkRooms()
     {
         for (int i = 0; i < graph.VerticesNumber; i++)
         {
             Room currentRoom = rooms[i];
-            List<int> connections = graph.GetConnections(i);  // Prende le connessioni corrette
 
-            // L'array deve avere la stessa lunghezza delle porte della stanza
+            // Ottiene le connessioni della stanza corrente dal grafo
+            List<int> connections = graph.GetConnections(i);
+
+            // Inizializza l'array delle stanze collegate
             currentRoom.connectedRooms = new Room[currentRoom.doors.Length];
 
             for (int j = 0; j < connections.Count; j++)
@@ -59,15 +73,17 @@ public class RoomSpawner : MonoBehaviour
                 int connectedRoomID = connections[j];
                 Room connectedRoom = rooms[connectedRoomID];
 
-                // Se esiste una porta in questa posizione, assegniamo la connessione
+                // Assegna la stanza collegata se esiste una porta disponibile
                 if (j < currentRoom.doors.Length)
                 {
                     currentRoom.connectedRooms[j] = connectedRoom;
                 }
             }
 
-            // Aggiorna lo stato delle porte e dei DoorCoverUp
+            // Inizializza le connessioni della stanza
             currentRoom.InitializeConnections(currentRoom.connectedRooms);
         }
+
+        Debug.Log("Stanze collegate con successo.");
     }
 }
