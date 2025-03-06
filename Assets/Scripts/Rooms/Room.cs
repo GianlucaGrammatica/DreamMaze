@@ -56,7 +56,24 @@ public class Room : MonoBehaviour
             if (connectedRooms[i] != null)
             {
                 // Trova l'indice della porta opposta
-                int oppositeDoorIndex = (i + 2) % 4;
+                int oppositeDoorIndex = 0;
+
+                switch (i)
+                {
+                    case 0:
+                        oppositeDoorIndex = 2;
+                        break;
+                    case 2:
+                        oppositeDoorIndex = 0;
+                        break;
+                    case 1:
+                        oppositeDoorIndex = 3;
+                        break;
+                    case 3:
+                        oppositeDoorIndex = 1;
+                        break;
+                }
+
 
                 // Assegna il teleportDestination della porta corrente allo spawner della porta opposta della stanza collegata
                 doors[i].teleportDestination = connectedRooms[i].Spawners[oppositeDoorIndex].transform;
