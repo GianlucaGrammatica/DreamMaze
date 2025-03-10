@@ -44,7 +44,10 @@ public class Graph : MonoBehaviour
         BaseMatrix = new int[VerticesNumber, VerticesNumber];
         random = new System.Random();
 
-        for (int i = 0; i < VerticesNumber; i++)
+        Node nodoIn = new Node(0);
+        Grafo.Add(nodoIn);
+
+        for (int i = 1; i < VerticesNumber; i++)
         {
             Node nodo = new Node(i);
             Grafo.Add(nodo);

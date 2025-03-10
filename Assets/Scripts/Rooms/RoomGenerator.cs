@@ -37,7 +37,10 @@ public class RoomSpawner : MonoBehaviour
         for (int i = 0; i < graph.VerticesNumber; i++)
         {
             // Sceglie un prefab casuale dall'array
-            GameObject selectedPrefab = roomPrefabs[Random.Range(0, roomPrefabs.Length)];
+            GameObject selectedPrefab = roomPrefabs[Random.Range(1, roomPrefabs.Length)];
+            if(i == 0){
+                selectedPrefab = roomPrefabs[0];
+            }
 
             // Istanzia la stanza nella posizione corrente
             GameObject roomObj = Instantiate(selectedPrefab, currentPosition, Quaternion.identity, roomParent);
