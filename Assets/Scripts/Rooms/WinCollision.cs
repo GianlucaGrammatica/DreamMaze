@@ -3,15 +3,13 @@ using UnityEngine;
 public class WinCollision : MonoBehaviour
 {
     public WinUI winUI;
-
-    // Chiamato quando un oggetto entra in collisione con il trigger
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Controlla se l'oggetto che ha colpito è il player
-        if (other.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player"))
         {
-            // Imposta la visibilità di WinUI a true
-            winUI.isShowing = true;
+            winUI.menuCanvas.SetActive(true);
+            Debug.Log("Collided - Attivato menuCanvas");
         }
     }
+
 }

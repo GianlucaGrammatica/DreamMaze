@@ -14,10 +14,5 @@ public class WinUI : MonoBehaviour
 
     void Update()
     {
-        if (isShowing != lastState)
-        {
-            menuCanvas.SetActive(isShowing);
-            lastState = isShowing;
-        }
     }
 }

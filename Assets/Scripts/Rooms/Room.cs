@@ -16,6 +16,7 @@ public class Room : MonoBehaviour
 
     // Stanze collegate a questa stanza
     public Room[] connectedRooms;
+    public Canvas transitionCanvas;
 
     // Inizializza le connessioni della stanza con altre stanze
     // Aggiorna lo stato delle porte e assegna le destinazioni di teletrasporto
@@ -24,6 +25,7 @@ public class Room : MonoBehaviour
         connectedRooms = connections;
         UpdateDoorStates();
         AssignTeleportDestinations();
+        AssignTransitionToDoors();
     }
 
     // Aggiorna lo stato delle porte e delle coperture delle porte in base ai collegamenti
@@ -80,5 +82,16 @@ public class Room : MonoBehaviour
         }
 
         Debug.Log("Destinazioni di teletrasporto assegnate per la stanza: " + roomID);
+    }
+
+    private void AssignTransitionToDoors()
+    {
+        foreach (var door in doors)
+        {
+            if (door != null)
+            {
+                door.SetTransition(transitionCanvas);
+            }
+        }
     }
 }

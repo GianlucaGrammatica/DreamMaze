@@ -1,30 +1,43 @@
 using UnityEngine;
+using System.Collections;
 
 public class Door : MonoBehaviour
 {
-    // Porta a cui collegarsi per il teletrasporto
     public Transform teleportDestination;
-
-    // Controlla se la porta è collegata a un'altra porta
     public bool isLinked = false;
-
-    // Offset per il teletrasporto, per evitare sovrapposizioni
     public float teleportOffset = 2f;
+    private Canvas transitionCanvas;
+    private Animator transitionAnimator;
 
-    // Metodo chiamato quando un oggetto entra nel trigger della porta
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void SetTransition(Canvas canvas)
     {
-        // Verifica se l'oggetto che entra nel trigger è il player e se la porta è collegata
-        if (collision.gameObject.CompareTag("Player") && isLinked)
+        transitionCanvas = canvas;
+        if (transitionCanvas != null)
         {
-            TeleportPlayer(collision.gameObject);
+            transitionAnimator = transitionCanvas.GetComponentInChildren<Animator>();
         }
     }
 
-    // Teletrasporta il giocatore alla destinazione con l'offset applicato
+
+    private IEnumerator TeleportWithTransition(GameObject player)
+    {
+        if (transitionCanvas != null && transitionAnimator != null)
+        {
+            transitionCanvas.gameObject.SetActive(true);
+            transitionAnimator.Play("Transition");
+            yield return new WaitForSeconds(1.09f);
+        }
+
+        TeleportPlayer(player);
+
+        if (transitionCanvas != null)
+        {
+            transitionCanvas.gameObject.SetActive(false);
+        }
+    }
+
     private void TeleportPlayer(GameObject player)
     {
-        // Ottieni il Collider2D del giocatore
         Collider2D playerCollider = player.GetComponent<Collider2D>();
         if (playerCollider == null)
         {
@@ -32,17 +45,19 @@ public class Door : MonoBehaviour
             return;
         }
 
-        // Calcola l'altezza del giocatore
         float playerHeight = playerCollider.bounds.size.y;
-
-        // Teletrasporta il giocatore alla posizione dello spawner, regolando per la base del giocatore
         Vector2 teleportPosition = teleportDestination.position;
-        teleportPosition.y -= playerHeight / 2; // Sposta il giocatore in basso di metà della sua altezza
+        teleportPosition.y -= playerHeight / 2;
 
-        // Applica la nuova posizione
         player.transform.position = teleportPosition;
-
-        // Debug: stampa la posizione di destinazione
         Debug.Log("Player teleported to: " + teleportPosition);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && isLinked)
+        {
+            StartCoroutine(TeleportWithTransition(collision.gameObject));
+        }
     }
 }
