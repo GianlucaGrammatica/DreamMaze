@@ -9,7 +9,7 @@ public class WinUI : MonoBehaviour
 
     void Start()
     {
-        menuCanvas.SetActive(true);
+        menuCanvas.SetActive(false);
     }
 
     void Update()
