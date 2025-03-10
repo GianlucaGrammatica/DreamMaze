@@ -56,33 +56,33 @@ public class RoomSpawner : MonoBehaviour
 
     // Collega le stanze in base alla matrice di adiacenza del grafo
     void LinkRooms()
-{
-    for (int i = 0; i < graph.VerticesNumber; i++)
     {
-        Room currentRoom = rooms[i];
-        Node currentNode = graph.Grafo[i];
-
-        // Inizializza l'array delle stanze collegate
-        currentRoom.connectedRooms = new Room[currentRoom.doors.Length];
-
-        for (int j = 0; j < 4; j++)
+        for (int i = 0; i < graph.VerticesNumber; i++)
         {
-            Node connectedNode = currentNode.nodes[j];
-            if (connectedNode != null)
+            Room currentRoom = rooms[i];
+            Node currentNode = graph.Grafo[i];
+
+            // Inizializza l'array delle stanze collegate
+            currentRoom.connectedRooms = new Room[currentRoom.doors.Length];
+
+            for (int j = 0; j < 4; j++)
             {
-                currentRoom.connectedRooms[j] = rooms[connectedNode.ID];
+                Node connectedNode = currentNode.nodes[j];
+                if (connectedNode != null)
+                {
+                    currentRoom.connectedRooms[j] = rooms[connectedNode.ID];
+                }
+                else
+                {
+                    currentRoom.connectedRooms[j] = null;
+                }
             }
-            else
-            {
-                currentRoom.connectedRooms[j] = null;
-            }
+
+            // Inizializza le connessioni della stanza
+            currentRoom.InitializeConnections(currentRoom.connectedRooms);
         }
 
-        // Inizializza le connessioni della stanza
-        currentRoom.InitializeConnections(currentRoom.connectedRooms);
+        Debug.Log("Stanze collegate con successo.");
     }
-
-    Debug.Log("Stanze collegate con successo.");
-}
 }
 

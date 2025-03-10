@@ -61,19 +61,18 @@ public class Room : MonoBehaviour
                 switch (i)
                 {
                     case 0:
-                        oppositeDoorIndex = 2;
+                        oppositeDoorIndex = 2; // Destra -> Sinistra
                         break;
                     case 2:
-                        oppositeDoorIndex = 0;
+                        oppositeDoorIndex = 0; // Sinistra -> Destra
                         break;
                     case 1:
-                        oppositeDoorIndex = 3;
+                        oppositeDoorIndex = 3; // Sotto -> Sopra
                         break;
                     case 3:
-                        oppositeDoorIndex = 1;
+                        oppositeDoorIndex = 1; // Sopra -> Sotto
                         break;
                 }
-
 
                 // Assegna il teleportDestination della porta corrente allo spawner della porta opposta della stanza collegata
                 doors[i].teleportDestination = connectedRooms[i].Spawners[oppositeDoorIndex].transform;

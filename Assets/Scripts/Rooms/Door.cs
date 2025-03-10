@@ -24,17 +24,25 @@ public class Door : MonoBehaviour
     // Teletrasporta il giocatore alla destinazione con l'offset applicato
     private void TeleportPlayer(GameObject player)
     {
-        // Calcola la direzione dell'offset per il teletrasporto
-        Vector2 offsetDirection = (teleportDestination.position - transform.position).normalized;
+        // Ottieni il Collider2D del giocatore
+        Collider2D playerCollider = player.GetComponent<Collider2D>();
+        if (playerCollider == null)
+        {
+            Debug.LogError("Il giocatore non ha un Collider2D!");
+            return;
+        }
 
-        // Calcola la posizione di teletrasporto con l'offset applicato
-        Vector2 teleportPosition = (Vector2)teleportDestination.position + offsetDirection * teleportOffset;
+        // Calcola l'altezza del giocatore
+        float playerHeight = playerCollider.bounds.size.y;
 
-        // Teletrasporta il giocatore alla posizione calcolata
+        // Teletrasporta il giocatore alla posizione dello spawner, regolando per la base del giocatore
+        Vector2 teleportPosition = teleportDestination.position;
+        teleportPosition.y -= playerHeight / 2; // Sposta il giocatore in basso di metà della sua altezza
+
+        // Applica la nuova posizione
         player.transform.position = teleportPosition;
 
-        // Debug: stampa la posizione di destinazione e la posizione di teletrasporto
-        Debug.Log("Destination position: " + teleportDestination.position);
+        // Debug: stampa la posizione di destinazione
         Debug.Log("Player teleported to: " + teleportPosition);
     }
 }
