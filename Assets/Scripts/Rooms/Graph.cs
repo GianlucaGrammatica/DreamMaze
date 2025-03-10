@@ -21,7 +21,7 @@ public class Graph : MonoBehaviour
     private int[,] BaseMatrix;
 
     // Lista di tutti i nodi nel grafo
-    private List<Node> Grafo = new List<Node>();
+    public List<Node> Grafo = new List<Node>();
 
     // Lista dei nodi con almeno una connessione
     public List<Node> ConnectedNodes = new List<Node>();
@@ -57,21 +57,26 @@ public class Graph : MonoBehaviour
 
         FirstNode = Grafo[0];
         LastNode = Grafo[VerticesNumber - 1];
+        this.GenerateMatrix();
+        this.PopulateList();
+        this.DebugGraph();
     }
 
     // Ottiene i collegamenti di un nodo specifico
     public List<int> GetConnections(int nodeID)
     {
         Debug.Log($"Ottengo connessioni per nodo {nodeID}");
-        List<int> connections = new List<int>();
+        List<int> connections = new List<int> { -1, -1, -1, -1 };
 
-        for (int j = 0; j < VerticesNumber; j++)
+        Node node = Grafo[nodeID];
+        for (int i = 0; i < 4; i++)
         {
-            if (BaseMatrix[nodeID, j] == 1)
+            if (node.nodes[i] != null)
             {
-                connections.Add(j);
+                connections[i] = node.nodes[i].ID;
             }
         }
+
         Debug.Log($"Nodo {nodeID} ha {connections.Count} connessioni");
         return connections;
     }
@@ -79,30 +84,98 @@ public class Graph : MonoBehaviour
     // Genera la matrice di adiacenza con collegamenti casuali
     public void GenerateMatrix()
     {
-        Debug.Log("Generazione matrice di adiacenza");
+        Debug.Log("Generazione matrice di adiacenza e connessioni direzionali");
         int[] connections = new int[VerticesNumber];
 
+        // Collega i nodi in modo sequenziale per garantire un percorso minimo
+        for (int i = 0; i < VerticesNumber - 1; i++)
+        {
+            ConnectNodes(i, i + 1); // Collega il nodo corrente al nodo successivo
+        }
+
+        // Aggiungi collegamenti casuali
         for (int i = 0; i < VerticesNumber; i++)
         {
             for (int j = 0; j < VerticesNumber; j++)
             {
-                if (i == 0 && j == VerticesNumber - 1) continue;
-                if (i == j) continue;
+                if (i == j) continue; // Evita di collegare un nodo a sé stesso
 
-                if (connections[i] < 4 && connections[j] < 4 && random.NextDouble() < 0.15)
+                // Collega i nodi con una probabilità del 30% (aumentata da 15%)
+                if (connections[i] < 4 && connections[j] < 4 && random.NextDouble() < 0.30)
                 {
-                    BaseMatrix[i, j] = 1;
-                    BaseMatrix[j, i] = 1;
-                    connections[i]++;
-                    connections[j]++;
+                    // Verifica se la connessione esiste già
+                    if (BaseMatrix[i, j] == 0)
+                    {
+                        Debug.Log("🎂Connetto nodi: " + i +" - " +  j);
+                        ConnectNodes(i, j);
+                        connections[i]++;
+                        connections[j]++;
+                    }
                 }
             }
         }
 
+        // Verifica che ci siano almeno 2 percorsi tra il primo e l'ultimo nodo
         if (CountPaths(0, VerticesNumber - 1) < 2)
         {
             Debug.Log("Percorsi insufficienti, aggiunta di collegamenti casuali");
             AddRandomEdge(random.Next(1, 3));
+        }
+    }
+
+private void ConnectNodes(int node1ID, int node2ID)
+{
+    Node node1 = Grafo[node1ID];
+    Node node2 = Grafo[node2ID];
+
+    // Trova una direzione libera per node1
+    int direction1 = FindFreeDirection(node1);
+    if (direction1 == -1)
+    {
+        Debug.LogWarning($"Nodo {node1ID} non ha direzioni libere.");
+        return;
+    }
+
+    // Trova la direzione opposta per node2
+    int direction2 = GetOppositeDirection(direction1);
+    if (direction2 == -1 || node2.nodes[direction2] != null)
+    {
+        Debug.LogWarning($"Nodo {node2ID} non ha una direzione opposta libera.");
+        return;
+    }
+
+    // Collega i nodi nelle direzioni appropriate
+    node1.nodes[direction1] = node2; // Room0.nodes[0] = Room2
+    node2.nodes[direction2] = node1; // Room2.nodes[2] = Room0
+
+    // Aggiorna la BaseMatrix per riflettere la connessione bidirezionale
+    BaseMatrix[node1ID, node2ID] = 1;
+    BaseMatrix[node2ID, node1ID] = 1;
+
+    Debug.Log($"💛💛Collegamento creato: Nodo {node1ID} (direzione {direction1}) -> Nodo {node2ID} (direzione {direction2})");
+}
+
+    private int FindFreeDirection(Node node)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (node.nodes[i] == null)
+            {
+                return i;
+            }
+        }
+        return -1; // Nessuna direzione libera
+    }
+
+    private int GetOppositeDirection(int direction)
+    {
+        switch (direction)
+        {
+            case 0: return 2; // Destra -> Sinistra
+            case 1: return 3; // Sotto -> Sopra
+            case 2: return 0; // Sinistra -> Destra
+            case 3: return 1; // Sopra -> Sotto
+            default: return -1;
         }
     }
 
@@ -181,35 +254,85 @@ public class Graph : MonoBehaviour
     }
 
     // Popola la lista dei nodi collegati
-    public void PopulateList()
+  public void PopulateList()
+{
+    Debug.Log("Popolamento lista nodi collegati");
+    ConnectedNodes.Clear();
+
+    for (int i = 0; i < VerticesNumber; i++)
     {
-        Debug.Log("Popolamento lista nodi collegati");
-        ConnectedNodes.Clear();
+        Node nodo = Grafo[i];
+        int count = 0;
 
-        for (int i = 0; i < VerticesNumber; i++)
+        for (int j = 0; j < 4; j++)
         {
-            Node nodo = Grafo[i];
-            int count = 0;
-
-            for (int j = 0; j < VerticesNumber; j++)
+            if (nodo.nodes[j] != null)
             {
-                if (BaseMatrix[i, j] != 0 && Grafo[j] != null)
-                {
-                    nodo.nodes[count] = Grafo[j];
-                    count++;
-                }
-            }
-
-            for (int k = count; k < nodo.nodes.Length; k++)
-            {
-                nodo.nodes[k] = null;
-            }
-
-            if (count > 0 && !ConnectedNodes.Contains(nodo))
-            {
-                ConnectedNodes.Add(nodo);
+                count++;
             }
         }
-        Debug.Log($"Lista nodi collegati popolata con {ConnectedNodes.Count} nodi");
+
+        if (count > 0 && !ConnectedNodes.Contains(nodo))
+        {
+            ConnectedNodes.Add(nodo);
+        }
     }
+    Debug.Log($"Lista nodi collegati popolata con {ConnectedNodes.Count} nodi");
+}
+
+    public void FindDebugNode(int nodeId)
+    {
+        Node toDebug = Grafo.Find(n => n.ID == nodeId);
+
+        if (toDebug != null)
+        {
+            Debug.Log($"Nodo trovato: ID {toDebug.ID}");
+        }
+        else
+        {
+            Debug.Log($"Nodo con ID {nodeId} non trovato.");
+        }
+    }
+
+    public void DebugGraph()
+    {
+        Debug.Log("===== DEBUG GRAFO =====");
+
+        // Stampa la lista dei nodi e le loro connessioni
+        foreach (Node nodo in Grafo)
+        {
+            string connessioni = "";
+            foreach (Node connectedNode in nodo.nodes)
+            {
+                if (connectedNode != null)
+                {
+                    connessioni += connectedNode.ID + " ";
+                }
+            }
+            Debug.Log($"Nodo {nodo.ID} → Connessioni: {connessioni}");
+        }
+
+        // Stampa la matrice di adiacenza
+        Debug.Log("===== MATRICE DI ADIACENZA =====");
+        for (int i = 0; i < VerticesNumber; i++)
+        {
+            string row = "";
+            for (int j = 0; j < VerticesNumber; j++)
+            {
+                row += BaseMatrix[i, j] + " ";
+            }
+            Debug.Log(row);
+        }
+
+        // Stampa nodi con almeno una connessione
+        Debug.Log("===== NODI COLLEGATI =====");
+        foreach (Node nodo in ConnectedNodes)
+        {
+            Debug.Log($"Nodo {nodo.ID} è connesso");
+        }
+
+        Debug.Log("===== DEBUG COMPLETATO =====");
+    }
+
+
 }

@@ -51,7 +51,7 @@ public class Room : MonoBehaviour
     // Assegna le destinazioni di teletrasporto delle porte in base agli spawner delle stanze collegate
     public void AssignTeleportDestinations()
     {
-        for (int i = 0; i < doors.Length; i++)
+        for (int i = 0; i < 4; i++)
         {
             if (connectedRooms[i] != null)
             {

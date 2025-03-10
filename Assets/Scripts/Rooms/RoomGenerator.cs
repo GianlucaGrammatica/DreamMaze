@@ -22,8 +22,6 @@ public class RoomSpawner : MonoBehaviour
     {
         // Inizializza il grafo, genera la matrice di adiacenza e popola la lista delle connessioni
         graph.InitializeGraph(graph.VerticesNumber);
-        graph.GenerateMatrix();
-        graph.PopulateList();
 
         // Genera le stanze e le collega
         GenerateRooms();
@@ -43,6 +41,7 @@ public class RoomSpawner : MonoBehaviour
 
             // Istanzia la stanza nella posizione corrente
             GameObject roomObj = Instantiate(selectedPrefab, currentPosition, Quaternion.identity, roomParent);
+            roomObj.name = "Room " + i;
 
             Room room = roomObj.GetComponent<Room>();
             room.roomID = i;
@@ -52,38 +51,38 @@ public class RoomSpawner : MonoBehaviour
             currentPosition += new Vector3(roomOffset, 0, 0);
         }
 
-        Debug.Log("Stanze generate con successo.");
+        Debug.Log("🔢🔢 Stanze generate con successo. - Len: " + rooms.Length);
     }
 
     // Collega le stanze in base alla matrice di adiacenza del grafo
     void LinkRooms()
+{
+    for (int i = 0; i < graph.VerticesNumber; i++)
     {
-        for (int i = 0; i < graph.VerticesNumber; i++)
+        Room currentRoom = rooms[i];
+        Node currentNode = graph.Grafo[i];
+
+        // Inizializza l'array delle stanze collegate
+        currentRoom.connectedRooms = new Room[currentRoom.doors.Length];
+
+        for (int j = 0; j < 4; j++)
         {
-            Room currentRoom = rooms[i];
-
-            // Ottiene le connessioni della stanza corrente dal grafo
-            List<int> connections = graph.GetConnections(i);
-
-            // Inizializza l'array delle stanze collegate
-            currentRoom.connectedRooms = new Room[currentRoom.doors.Length];
-
-            for (int j = 0; j < connections.Count; j++)
+            Node connectedNode = currentNode.nodes[j];
+            if (connectedNode != null)
             {
-                int connectedRoomID = connections[j];
-                Room connectedRoom = rooms[connectedRoomID];
-
-                // Assegna la stanza collegata se esiste una porta disponibile
-                if (j < currentRoom.doors.Length)
-                {
-                    currentRoom.connectedRooms[j] = connectedRoom;
-                }
+                currentRoom.connectedRooms[j] = rooms[connectedNode.ID];
             }
-
-            // Inizializza le connessioni della stanza
-            currentRoom.InitializeConnections(currentRoom.connectedRooms);
+            else
+            {
+                currentRoom.connectedRooms[j] = null;
+            }
         }
 
-        Debug.Log("Stanze collegate con successo.");
+        // Inizializza le connessioni della stanza
+        currentRoom.InitializeConnections(currentRoom.connectedRooms);
     }
+
+    Debug.Log("Stanze collegate con successo.");
 }
+}
+
