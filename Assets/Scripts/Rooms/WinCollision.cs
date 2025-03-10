@@ -2,15 +2,16 @@ using UnityEngine;
 
 public class WinCollision : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public WinUI winUI;
 
-    // Update is called once per frame
-    void Update()
+    // Chiamato quando un oggetto entra in collisione con il trigger
+    void OnTriggerEnter(Collider other)
     {
-        
+        // Controlla se l'oggetto che ha colpito è il player
+        if (other.CompareTag("Player"))
+        {
+            // Imposta la visibilità di WinUI a true
+            winUI.isShowing = true;
+        }
     }
 }
