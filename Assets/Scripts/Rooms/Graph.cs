@@ -107,7 +107,7 @@ public class Graph : MonoBehaviour
                     // Verifica se la connessione esiste già
                     if (BaseMatrix[i, j] == 0)
                     {
-                        Debug.Log("🎂Connetto nodi: " + i +" - " +  j);
+                        Debug.Log("🎂Connetto nodi: " + i + " - " + j);
                         ConnectNodes(i, j);
                         connections[i]++;
                         connections[j]++;
@@ -124,37 +124,37 @@ public class Graph : MonoBehaviour
         }
     }
 
-private void ConnectNodes(int node1ID, int node2ID)
-{
-    Node node1 = Grafo[node1ID];
-    Node node2 = Grafo[node2ID];
-
-    // Trova una direzione libera per node1
-    int direction1 = FindFreeDirection(node1);
-    if (direction1 == -1)
+    private void ConnectNodes(int node1ID, int node2ID)
     {
-        Debug.LogWarning($"Nodo {node1ID} non ha direzioni libere.");
-        return;
+        Node node1 = Grafo[node1ID];
+        Node node2 = Grafo[node2ID];
+
+        // Trova una direzione libera per node1
+        int direction1 = FindFreeDirection(node1);
+        if (direction1 == -1)
+        {
+            Debug.LogWarning($"Nodo {node1ID} non ha direzioni libere.");
+            return;
+        }
+
+        // Trova la direzione opposta per node2
+        int direction2 = GetOppositeDirection(direction1);
+        if (direction2 == -1 || node2.nodes[direction2] != null)
+        {
+            Debug.LogWarning($"Nodo {node2ID} non ha una direzione opposta libera.");
+            return;
+        }
+
+        // Collega i nodi nelle direzioni appropriate
+        node1.nodes[direction1] = node2; // Room0.nodes[0] = Room2
+        node2.nodes[direction2] = node1; // Room2.nodes[2] = Room0
+
+        // Aggiorna la BaseMatrix per riflettere la connessione bidirezionale
+        BaseMatrix[node1ID, node2ID] = 1;
+        BaseMatrix[node2ID, node1ID] = 1;
+
+        Debug.Log($"💛💛Collegamento creato: Nodo {node1ID} (direzione {direction1}) -> Nodo {node2ID} (direzione {direction2})");
     }
-
-    // Trova la direzione opposta per node2
-    int direction2 = GetOppositeDirection(direction1);
-    if (direction2 == -1 || node2.nodes[direction2] != null)
-    {
-        Debug.LogWarning($"Nodo {node2ID} non ha una direzione opposta libera.");
-        return;
-    }
-
-    // Collega i nodi nelle direzioni appropriate
-    node1.nodes[direction1] = node2; // Room0.nodes[0] = Room2
-    node2.nodes[direction2] = node1; // Room2.nodes[2] = Room0
-
-    // Aggiorna la BaseMatrix per riflettere la connessione bidirezionale
-    BaseMatrix[node1ID, node2ID] = 1;
-    BaseMatrix[node2ID, node1ID] = 1;
-
-    Debug.Log($"💛💛Collegamento creato: Nodo {node1ID} (direzione {direction1}) -> Nodo {node2ID} (direzione {direction2})");
-}
 
     private int FindFreeDirection(Node node)
     {
@@ -255,31 +255,31 @@ private void ConnectNodes(int node1ID, int node2ID)
     }
 
     // Popola la lista dei nodi collegati
-  public void PopulateList()
-{
-    Debug.Log("Popolamento lista nodi collegati");
-    ConnectedNodes.Clear();
-
-    for (int i = 0; i < VerticesNumber; i++)
+    public void PopulateList()
     {
-        Node nodo = Grafo[i];
-        int count = 0;
+        Debug.Log("Popolamento lista nodi collegati");
+        ConnectedNodes.Clear();
 
-        for (int j = 0; j < 4; j++)
+        for (int i = 0; i < VerticesNumber; i++)
         {
-            if (nodo.nodes[j] != null)
+            Node nodo = Grafo[i];
+            int count = 0;
+
+            for (int j = 0; j < 4; j++)
             {
-                count++;
+                if (nodo.nodes[j] != null)
+                {
+                    count++;
+                }
+            }
+
+            if (count > 0 && !ConnectedNodes.Contains(nodo))
+            {
+                ConnectedNodes.Add(nodo);
             }
         }
-
-        if (count > 0 && !ConnectedNodes.Contains(nodo))
-        {
-            ConnectedNodes.Add(nodo);
-        }
+        Debug.Log($"Lista nodi collegati popolata con {ConnectedNodes.Count} nodi");
     }
-    Debug.Log($"Lista nodi collegati popolata con {ConnectedNodes.Count} nodi");
-}
 
     public void FindDebugNode(int nodeId)
     {

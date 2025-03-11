@@ -69,7 +69,7 @@ public class RoomSpawner : MonoBehaviour
             Node currentNode = graph.Grafo[i];
 
             // Inizializza l'array delle stanze collegate
-            currentRoom.connectedRooms = new Room[currentRoom.doors.Length];
+            currentRoom.connectedRooms = new Room[4];
 
             for (int j = 0; j < 4; j++)
             {
