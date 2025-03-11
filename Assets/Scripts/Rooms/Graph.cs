@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public class Node
 {
-    public int ID; // Identificativo del nodo
-    public Node[] nodes = new Node[4] { null, null, null, null }; // Nodi collegati (massimo 4)
+    public int ID; 
+    public Node[] nodes = new Node[4] { null, null, null, null }; 
 
     public Node(int id)
     {
