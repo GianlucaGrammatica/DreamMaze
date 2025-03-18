@@ -23,9 +23,6 @@ public class Graph : MonoBehaviour
     // Lista di tutti i nodi nel grafo
     public List<Node> Grafo = new List<Node>();
 
-    // Lista dei nodi con almeno una connessione
-    public List<Node> ConnectedNodes = new List<Node>();
-
     // Primo nodo e ultimo nodo del grafo
     public Node FirstNode;
     public Node LastNode;
@@ -59,7 +56,6 @@ public class Graph : MonoBehaviour
         FirstNode = Grafo[0];
         LastNode = Grafo[VerticesNumber - 1];
         this.GenerateMatrix();
-        this.PopulateList();
         this.DebugGraph();
     }
 
@@ -254,32 +250,6 @@ public class Graph : MonoBehaviour
         return (Vertex >= 0 && Vertex < VerticesNumber);
     }
 
-    // Popola la lista dei nodi collegati
-    public void PopulateList()
-    {
-        Debug.Log("Popolamento lista nodi collegati");
-        ConnectedNodes.Clear();
-
-        for (int i = 0; i < VerticesNumber; i++)
-        {
-            Node nodo = Grafo[i];
-            int count = 0;
-
-            for (int j = 0; j < 4; j++)
-            {
-                if (nodo.nodes[j] != null)
-                {
-                    count++;
-                }
-            }
-
-            if (count > 0 && !ConnectedNodes.Contains(nodo))
-            {
-                ConnectedNodes.Add(nodo);
-            }
-        }
-        Debug.Log($"Lista nodi collegati popolata con {ConnectedNodes.Count} nodi");
-    }
 
     public void FindDebugNode(int nodeId)
     {
@@ -323,13 +293,6 @@ public class Graph : MonoBehaviour
                 row += BaseMatrix[i, j] + " ";
             }
             Debug.Log(row);
-        }
-
-        // Stampa nodi con almeno una connessione
-        Debug.Log("===== NODI COLLEGATI =====");
-        foreach (Node nodo in ConnectedNodes)
-        {
-            Debug.Log($"Nodo {nodo.ID} è connesso");
         }
 
         Debug.Log("===== DEBUG COMPLETATO =====");
